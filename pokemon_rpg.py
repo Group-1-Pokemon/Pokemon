@@ -63,8 +63,11 @@ class Pokemon():
         time.sleep(0.5)
     
     #ham tien hoa 
-    def evolve(self): 
+    def evolve(self, show_notification = True): 
         old_name = self.name
+        evolved = False
+        new_move = None
+        
         if self.level >= 10:
             
             if self.name == "Charmander":
@@ -74,12 +77,7 @@ class Pokemon():
                 self.atk = self.atk + 12
                 self.max_hp = self.max_hp + 20
                 self.hp = self.max_hp
-                print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
-                time.sleep(0.5)
-                print(f"Pokemon đã học được chiêu mới: {new_move.name}")
-                time.sleep(0.5)
-                print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
-                time.sleep(0.5)
+                evolved = True
                 
             if self.name == "Bulbasaur":
                 self.name = "Ivysaur"
@@ -88,12 +86,7 @@ class Pokemon():
                 self.atk = self.atk + 11
                 self.max_hp = self.max_hp + 22
                 self.hp = self.max_hp
-                print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
-                time.sleep(0.5)
-                print(f"Pokemon đã học được chiêu mới: {new_move.name}")
-                time.sleep(0.5)
-                print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
-                time.sleep(0.5)
+                evolved = True
                 
             if self.name == "Squirtle":
                 self.name = "Wartortle"
@@ -102,12 +95,7 @@ class Pokemon():
                 self.atk = self.atk + 10
                 self.max_hp = self.max_hp + 24
                 self.hp = self.max_hp
-                print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
-                time.sleep(0.5)
-                print(f"Pokemon đã học được chiêu mới: {new_move.name}")
-                time.sleep(0.5)
-                print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
-                time.sleep(0.5)
+                evolved = True
                 
         if self.level >= 20:
             
@@ -118,13 +106,8 @@ class Pokemon():
                 self.atk = self.atk + 20
                 self.max_hp = self.max_hp + 30
                 self.hp = self.max_hp
-                print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
-                time.sleep(0.5)
-                print(f"Pokemon đã học được chiêu mới: {new_move.name}")
-                time.sleep(0.5)
-                print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
-                time.sleep(0.5)
-                
+                evolved = True
+            
             if self.name == "Ivysaur":
                 self.name = "Venusaur"
                 new_move = Move("Solar Beam", 70, "Grass")
@@ -132,12 +115,7 @@ class Pokemon():
                 self.atk = self.atk + 17
                 self.max_hp = self.max_hp + 33
                 self.hp = self.max_hp
-                print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
-                time.sleep(0.5)
-                print(f"Pokemon đã học được chiêu mới: {new_move.name}")
-                time.sleep(0.5)
-                print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
-                time.sleep(0.5)
+                evolved = True
                 
             if self.name == "Wartortle":
                 self.name = "Blastoise"
@@ -146,12 +124,26 @@ class Pokemon():
                 self.atk = self.atk + 14
                 self.max_hp = self.max_hp + 36
                 self.hp = self.max_hp
-                print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
-                time.sleep(0.5)
-                print(f"Pokemon đã học được chiêu mới: {new_move.name}")
-                time.sleep(0.5)
-                print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
-                time.sleep(0.5)
+                evolved = True
+                
+        if show_notification and evolved: #neu tien hoa va show_notification = True thi hien thong bao
+            print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
+            time.sleep(0.5)
+            print(f"- Pokemon đã học được chiêu mới: {new_move.name} -")
+            time.sleep(0.5)
+            print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
+            time.sleep(0.5)
+                
+    #ham pokemon dich manh len theo cap do
+    def scale_to_level(self, player_level):
+        enemy_level = max(5, player_level + random.randint(-3, 1)) #level dich thay doi theo level nguoi choi
+        level_difference = enemy_level - self.level #khoang cach level giua nguoi choi va ke dich
+        if level_difference > 0:
+            self.level = enemy_level
+            for i in range(level_difference): #chi so co ban cua ke dich tang theo su khac biet level
+                self.max_hp += random.randint(10, 15)
+                self.atk += random.randint(3, 7)
+            self.hp = self.max_hp
         
 class Move(): #ham chieu thuc cua Pokemon
     def __init__(self, name, damage, element):
@@ -182,6 +174,9 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
     poke_spawn = random.choice(enemy)
     opponent_pokemon = Pokemon(poke_spawn["name"], poke_spawn["hp"], poke_spawn["atk"], poke_spawn["element"], poke_spawn["moves"])
     time.sleep(1)
+    
+    opponent_pokemon.scale_to_level(player_pokemon.level)
+    opponent_pokemon.evolve(show_notification = False) #show_notification = False ==> khong chuc mung khi pokemon dich tien hoa
     
     print(f"Bắt gặp một {opponent_pokemon.name} hoang dã!")
     print(f"{player_pokemon.name} xuất chiến!")
@@ -217,7 +212,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
                     enemy_move = random.choice(opponent_pokemon.moves)
                     opponent_pokemon.attack(player_pokemon, enemy_move)
             else:
-                amount = random.randint(30,50)
+                amount = random.randint(30,40) + (opponent_pokemon.level - 5)*10
                 player_pokemon.gain_exp(amount)
                 player_pokemon.evolve()
                 print(f"Bạn đã hạ gục được {opponent_pokemon.name}!")
