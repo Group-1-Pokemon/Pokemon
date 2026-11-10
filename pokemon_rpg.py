@@ -129,7 +129,7 @@ class Pokemon():
         if show_notification and evolved: #neu tien hoa va show_notification = True thi hien thong bao
             print(f"-- Chúc mừng bạn! {old_name} đã tiến hóa thành {self.name} --")
             time.sleep(0.5)
-            print(f"- Pokemon đã học được chiêu mới: {new_move.name} -")
+            print(f"- {self.name} đã học được chiêu mới: {new_move.name} -")
             time.sleep(0.5)
             print(f"- Sức mạnh của bạn đã tăng lên đáng kể! -")
             time.sleep(0.5)
@@ -168,8 +168,8 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
     
     #danh sach doi thu
     enemy = [ {"name": "Charmander", "hp": 50, "atk": 15, "element": "Fire", "moves": [move11, move22]},
-              {"name": "Bulbasaur", "hp": 55, "atk": 12, "element": "Grass", "moves": [move11, move33]},
-              {"name": "Squirtle", "hp": 60, "atk": 10, "element": "Water", "moves": [move11, move44]} ]
+              {"name": "Bulbasaur", "hp": 55, "atk": 11, "element": "Grass", "moves": [move11, move33]},
+              {"name": "Squirtle", "hp": 60, "atk": 8, "element": "Water", "moves": [move11, move44]} ]
         
     poke_spawn = random.choice(enemy)
     opponent_pokemon = Pokemon(poke_spawn["name"], poke_spawn["hp"], poke_spawn["atk"], poke_spawn["element"], poke_spawn["moves"])
@@ -183,7 +183,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
     
     while player_pokemon.is_alive() and opponent_pokemon.is_alive():
         
-        print(f"{player_pokemon.name}: {player_pokemon.hp}/{player_pokemon.max_hp} vs {opponent_pokemon.name}: {opponent_pokemon.hp}/{opponent_pokemon.max_hp}")
+        print(f"{player_pokemon.name} (lv{player_pokemon.level}): {player_pokemon.hp}/{player_pokemon.max_hp} vs {opponent_pokemon.name} (lv{opponent_pokemon.level}): {opponent_pokemon.hp}/{opponent_pokemon.max_hp}")
         
         print("1. Tấn công")
         print("2. Hồi máu")
@@ -192,34 +192,39 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
         
         #lua chon hanh dong tan cong
         if choice == "1":
-            #chon chieu thuc cho Pokemon   
-            for index, move in enumerate(player_pokemon.moves, start = 1):
-                print(f"{index}. {move.name}: Sát thương {move.damage} hệ {move.element}")
-            move_choice = int(input(f"Chọn chiêu cho {player_pokemon.name} (Chọn một số từ 1-{len(player_pokemon.moves)}): ")) - 1
-            selected_move = player_pokemon.moves[move_choice]
+            while True:
+                try:
+                    #chon chieu thuc cho Pokemon   
+                    for index, move in enumerate(player_pokemon.moves, start = 1):
+                        print(f"{index}. {move.name}: Sát thương {move.damage} hệ {move.element}")
+                    move_choice = int(input(f"Chọn chiêu cho {player_pokemon.name} (Chọn một số từ 1-{len(player_pokemon.moves)}): ")) - 1
+                    selected_move = player_pokemon.moves[move_choice]
                 
             
-            if selected_move:
-                if random.random() < 0.05: #Pokemon co the ne tranh tan cong
-                    print(f"{opponent_pokemon.name} đã né được đòn tấn công của bạn")
-                else:
-                    player_pokemon.attack(opponent_pokemon, selected_move)
-            time.sleep(1)
-            if opponent_pokemon.is_alive():
-                if random.random() < 0.05: #Pokemon co the ne tranh tan cong
-                    print(f"Bạn đã né được đòn tấn công của {opponent_pokemon.name}")
-                else:
-                    enemy_move = random.choice(opponent_pokemon.moves)
-                    opponent_pokemon.attack(player_pokemon, enemy_move)
-            else:
-                amount = random.randint(30,40) + (opponent_pokemon.level - 5)*10
-                player_pokemon.gain_exp(amount)
-                player_pokemon.evolve()
-                print(f"Bạn đã hạ gục được {opponent_pokemon.name}!")
-                if random.random() < 0.3:
-                    player_pokemon.hp = player_pokemon.max_hp
-                    print("Bạn gặp trạm y tế và được hồi phục!")
-                return True
+                    if selected_move:
+                        if random.random() < 0.05: #Pokemon co the ne tranh tan cong
+                            print(f"{opponent_pokemon.name} đã né được đòn tấn công của bạn")
+                        else:
+                            player_pokemon.attack(opponent_pokemon, selected_move)
+                    time.sleep(1)
+                    if opponent_pokemon.is_alive():
+                        if random.random() < 0.05: #Pokemon co the ne tranh tan cong
+                            print(f"Bạn đã né được đòn tấn công của {opponent_pokemon.name}")
+                        else:
+                            enemy_move = random.choice(opponent_pokemon.moves)
+                            opponent_pokemon.attack(player_pokemon, enemy_move)
+                    else:
+                        amount = random.randint(30,40) + (opponent_pokemon.level - 5)*10
+                        player_pokemon.gain_exp(amount)
+                        player_pokemon.evolve()
+                        print(f"Bạn đã hạ gục được {opponent_pokemon.name}!")
+                        if random.random() < 0.3:
+                            player_pokemon.hp = player_pokemon.max_hp
+                            print("Bạn gặp trạm y tế và được hồi phục!")
+                        return True
+                    break
+                except:
+                    pass
                 
         #lua chon hanh dong hoi mau
         elif choice == "2":
@@ -253,13 +258,15 @@ def main():
     trainer_name = input("Nhập tên của bạn: ")
     if not trainer_name:
         trainer_name = "Unknown"
-    print(f"==== Chào mừng {trainer_name} đến với cuộc phiêu lưu cùng Pokemon! ====")
+    print("=" * 61)
+    print(f"Chào mừng {trainer_name} đến với cuộc phiêu lưu cùng Pokemon!")
+    print("=" * 61)
         
     while True:
     
-        Charmander = Pokemon("Charmander", 70, 15, "Fire", [move1, move2])
-        Bulbasaur = Pokemon("Bulbasaur", 75, 12, "Grass", [move1, move3])    
-        Squirtle = Pokemon("Squirtle", 80, 10, "Water", [move1, move4])
+        Charmander = Pokemon("Charmander", 50, 15, "Fire", [move1, move2])
+        Bulbasaur = Pokemon("Bulbasaur", 55, 12, "Grass", [move1, move3])    
+        Squirtle = Pokemon("Squirtle", 60, 9, "Water", [move1, move4])
     
         #chọn Pokemon khởi đầu 
         print("Hãy chọn bạn đồng hành của bạn:")
@@ -300,6 +307,4 @@ def main():
     
 if __name__ == "__main__":
     main()
-    
-    
-    
+
