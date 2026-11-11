@@ -1,11 +1,15 @@
 import random
 import time
+import os
 
 #bang tuong khac he
 TYPE_CHART = { "Fire": {"Fire": 0.5, "Grass": 1.5, "Water": 0.5},
                 "Grass": {"Fire": 0.5, "Grass": 0.5, "Water": 1.5},
                 "Water": {"Fire": 1.5, "Grass": 0.5, "Water": 0.5},
                 "Normal": {"Fire": 1, "Grass": 1, "Water": 1} }
+
+def clear_screen():
+    os.system('cls' if os.name == 'nt' else 'clear')
     
 class Pokemon():
 
@@ -25,8 +29,8 @@ class Pokemon():
     
     def attack(self, opponent, move): #ham tan cong tinh toan sat thuong gay ra va nhan vao
         base_damage = move.damage + int(self.atk * 0.2)
-        damage = random.randint(base_damage - 3, base_damage + 3)
-        real_damage = int(damage * TYPE_CHART.get(move.element, {}).get(opponent.element, 1))
+        dmg = random.randint(base_damage - 3, base_damage + 3)
+        real_damage = int(dmg * TYPE_CHART.get(move.element, {}).get(opponent.element, 1))
         real_damage = max(1, real_damage)
         if random.random() < 0.1:
             opponent.hp -= int(real_damage * 1.25)
@@ -174,6 +178,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
     poke_spawn = random.choice(enemy)
     opponent_pokemon = Pokemon(poke_spawn["name"], poke_spawn["hp"], poke_spawn["atk"], poke_spawn["element"], poke_spawn["moves"])
     time.sleep(1)
+    clear_screen()
     
     opponent_pokemon.scale_to_level(player_pokemon.level)
     opponent_pokemon.evolve(show_notification = False) #show_notification = False ==> khong chuc mung khi pokemon dich tien hoa
@@ -214,7 +219,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
                             enemy_move = random.choice(opponent_pokemon.moves)
                             opponent_pokemon.attack(player_pokemon, enemy_move)
                     else:
-                        amount = random.randint(30,40) + (opponent_pokemon.level - 5)*10
+                        amount = random.randint(30,50) + int(opponent_pokemon.level - 5)*10
                         player_pokemon.gain_exp(amount)
                         player_pokemon.evolve()
                         print(f"Bạn đã hạ gục được {opponent_pokemon.name}!")
@@ -225,6 +230,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
                     break
                 except:
                     pass
+        
                 
         #lua chon hanh dong hoi mau
         elif choice == "2":
@@ -232,6 +238,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
             time.sleep(1)
             enemy_move = random.choice(opponent_pokemon.moves)
             opponent_pokemon.attack(player_pokemon, enemy_move)
+            
         
         #lua chon hanh dong bo chay
         elif choice == "3":
@@ -246,6 +253,7 @@ def battle(player_pokemon): #ham tran dau giua 2 Pokemon
                 enemy_move = random.choice(opponent_pokemon.moves)
                 opponent_pokemon.attack(player_pokemon, enemy_move)
                 time.sleep(1)
+        clear_screen()
     return False
         
 def main():
@@ -290,6 +298,8 @@ def main():
         else:
             player_pokemon = Charmander
             print("---! Bạn chọn sai nên Charmander sẽ trở thành bạn đồng hành của bạn !---")
+        clear_screen()
+        
         
         while player_pokemon.is_alive():
             print("...Bạn đang băng qua khu rừng...")
@@ -307,4 +317,6 @@ def main():
     
 if __name__ == "__main__":
     main()
+
+
 
